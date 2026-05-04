@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Cliente {
+  id             String   @id @default(cuid())
+  empresa        String
+  rut            String?  @unique
+  rubro          String?
+  ciudad         String?
+  contactoNombre String?
+  email          String?
+  telefono       String?
+  sitioWeb       String?
+  dominio        String?
+  estado         String   @default("ACTIVO")
+  servicios      String?
+  observaciones  String?
+  creadoEn       DateTime @default(now())
+  actualizadoEn  DateTime @updatedAt
+
+  leads      Lead[]
+  propuestas Propuesta[]
+  proyectos  Proyecto[]
+  tareas     Tarea[]
+  pagos      Pago[]
+
+  @@map("clientes")
+}
+
+model Lead {
+  id                 String    @id @default(cuid())
+  nombre             String
+  empresa            String?
+  fuente             String    @default("WEB")
+  servicio           String?
+  dolorPrincipal     String?
+  presupuesto        Float?
+  probabilidad       Int?
+  estado             String    @default("NUEVO")
+  ultimoContacto     DateTime?
+  proximoSeguimiento DateTime?
+  notas              String?
+  creadoEn           DateTime  @default(now())
+  actualizadoEn      DateTime  @updatedAt
+
+  clienteId  String?
+  cliente    Cliente?    @relation(fields: [clienteId], references: [id])
+  propuestas Propuesta[]
+
+  @@map("leads")
+}
+
+model Propuesta {
+  id               String    @id @default(cuid())
+  titulo           String
+  servicio         String
+  valor            Float
+  formaPago        String    @default("TRANSFERENCIA")
+  fechaEnvio       DateTime?
+  fechaVencimiento DateTime?
+  estado           String    @default("BORRADOR")
+  comentarios      String?
+  archivoUrl       String?
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+
+  clienteId String
+  cliente   Cliente    @relation(fields: [clienteId], references: [id])
+  leadId    String?
+  lead      Lead?      @relation(fields: [leadId], references: [id])
+  proyectos Proyecto[]
+
+  @@map("propuestas")
+}
+
+model Proyecto {
+  id             String    @id @default(cuid())
+  nombre         String
+  descripcion    String?
+  servicio       String
+  estado         String    @default("PLANIFICADO")
+  prioridad      String    @default("MEDIA")
+  fechaInicio    DateTime?
+  fechaEntrega   DateTime?
+  valor          Float?
+  horasEstimadas Float?
+  horasReales    Float?
+  riesgos        String?
+  proximosPasos  String?
+  repositorio    String?
+  urlProduccion  String?
+  creadoEn       DateTime  @default(now())
+  actualizadoEn  DateTime  @updatedAt
+
+  clienteId   String
+  cliente     Cliente    @relation(fields: [clienteId], references: [id])
+  propuestaId String?
+  propuesta   Propuesta? @relation(fields: [propuestaId], references: [id])
+  tareas      Tarea[]
+  pagos       Pago[]
+
+  @@map("proyectos")
+}
+
+model Tarea {
+  id             String    @id @default(cuid())
+  titulo         String
+  descripcion    String?
+  tipo           String    @default("DESARROLLO")
+  prioridad      String    @default("MEDIA")
+  estado         String    @default("PENDIENTE")
+  fechaLimite    DateTime?
+  tiempoEstimado Float?
+  tiempoReal     Float?
+  comentarios    String?
+  creadoEn       DateTime  @default(now())
+  actualizadoEn  DateTime  @updatedAt
+
+  clienteId  String?
+  cliente    Cliente?  @relation(fields: [clienteId], references: [id])
+  proyectoId String?
+  proyecto   Proyecto? @relation(fields: [proyectoId], references: [id])
+
+  @@map("tareas")
+}
+
+model Pago {
+  id               String    @id @default(cuid())
+  descripcion      String
+  tipo             String    @default("INGRESO")
+  servicio         String?
+  monto            Float
+  fechaEmision     DateTime  @default(now())
+  fechaPago        DateTime?
+  estado           String    @default("PENDIENTE")
+  metodoPago       String?
+  utilidadEstimada Float?
+  numeroDocumento  String?
+  notas            String?
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+
+  clienteId  String?
+  cliente    Cliente?  @relation(fields: [clienteId], references: [id])
+  proyectoId String?
+  proyecto   Proyecto? @relation(fields: [proyectoId], references: [id])
+
+  @@map("pagos")
+}
+
+model Nota {
+  id        String   @id @default(cuid())
+  titulo    String   @default("Sin título")
+  contenido String   @default("")
+  tags      String   @default("")
+  creadoEn  DateTime @default(now())
+  editadoEn DateTime @updatedAt
+
+  @@map("notas")
+}

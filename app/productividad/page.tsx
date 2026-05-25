@@ -115,6 +115,17 @@ function formatMin(min: number): string {
   return `${h}h ${m}m`
 }
 
+function parseMin(input: string): number | null {
+  const s = input.trim().toLowerCase().replace(/\s+/g, "")
+  if (!s) return null
+  let m: RegExpMatchArray | null
+  if ((m = s.match(/^(\d+):(\d{1,2})$/))) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10)
+  if ((m = s.match(/^(\d+(?:\.\d+)?)h(\d+)m?$/))) return Math.round(parseFloat(m[1]) * 60) + parseInt(m[2], 10)
+  if ((m = s.match(/^(\d+(?:\.\d+)?)h$/))) return Math.round(parseFloat(m[1]) * 60)
+  if ((m = s.match(/^(\d+)m?$/))) return parseInt(m[1], 10)
+  return null
+}
+
 function scoreColor(pct: number) {
   if (pct >= 80) return "text-emerald-600"
   if (pct >= 60) return "text-amber-600"
@@ -256,7 +267,7 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
 
   async function agregarTarea() {
     if (!titulo.trim() || !planHoy) return
-    const estimadoNum = parseInt(estimadoMin, 10)
+    const estimadoNum = parseMin(estimadoMin)
     const res = await fetch(`${BASE_PATH}/api/productividad/tareas`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -265,7 +276,7 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
         titulo: titulo.trim(),
         area,
         peso,
-        estimadoMin: Number.isFinite(estimadoNum) && estimadoNum > 0 ? estimadoNum : null,
+        estimadoMin: estimadoNum !== null && estimadoNum > 0 ? estimadoNum : null,
         esCritica,
       }),
     })
@@ -471,13 +482,11 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
           </SelectContent>
         </Select>
         <Input
-          type="number"
-          inputMode="numeric"
-          min={0}
-          step={5}
-          placeholder="min"
-          title="Tiempo estimado (minutos)"
-          className="h-7 w-[70px] text-xs"
+          type="text"
+          inputMode="text"
+          placeholder="30m, 1h30, 2h"
+          title="Tiempo estimado: 30, 30m, 1h, 1h30, 1:30, 2.5h"
+          className="h-7 w-[88px] text-xs"
           value={estimadoMin}
           onChange={(e) => setEstimadoMin(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && agregarTarea()}

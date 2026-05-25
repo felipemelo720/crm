@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
         titulo: body.titulo,
         area: body.area ?? "OTRO",
         peso: body.peso ?? 1,
+        estimadoMin: typeof body.estimadoMin === "number" && body.estimadoMin > 0 ? body.estimadoMin : null,
         completada: body.completada ?? false,
         esCritica: body.esCritica ?? false,
       },

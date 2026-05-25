@@ -11,6 +11,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         ...(body.titulo !== undefined && { titulo: body.titulo }),
         ...(body.area !== undefined && { area: body.area }),
         ...(body.peso !== undefined && { peso: body.peso }),
+        ...(body.estimadoMin !== undefined && {
+          estimadoMin: typeof body.estimadoMin === "number" && body.estimadoMin > 0 ? body.estimadoMin : null,
+        }),
         ...(body.completada !== undefined && { completada: body.completada }),
         ...(body.esCritica !== undefined && { esCritica: body.esCritica }),
       },

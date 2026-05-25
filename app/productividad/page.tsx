@@ -33,6 +33,7 @@ interface TareaProductividad {
   titulo: string
   area: string
   peso: number
+  estimadoMin: number | null
   completada: boolean
   esCritica: boolean
   planDiaId: string
@@ -44,6 +45,8 @@ interface AreaStat {
   total: number
   completado: number
   pct: number | null
+  totalMin: number
+  completadoMin: number
 }
 
 interface Stats {
@@ -52,6 +55,8 @@ interface Stats {
   criticaDone: boolean
   totalTareas: number
   completadas: number
+  totalMin: number
+  completadoMin: number
 }
 
 interface PlanDia {
@@ -70,13 +75,24 @@ function calcLocalStats(tareas: TareaProductividad[]): Stats {
       const t = tareas.filter((x) => x.area === area)
       const total = t.reduce((s, x) => s + x.peso, 0)
       const completado = t.reduce((s, x) => s + (x.completada ? x.peso : 0), 0)
-      return { area, total, completado, pct: total ? Math.round((completado / total) * 100) : null }
+      const totalMin = t.reduce((s, x) => s + (x.estimadoMin ?? 0), 0)
+      const completadoMin = t.reduce((s, x) => s + (x.completada ? (x.estimadoMin ?? 0) : 0), 0)
+      return {
+        area,
+        total,
+        completado,
+        pct: total ? Math.round((completado / total) * 100) : null,
+        totalMin,
+        completadoMin,
+      }
     })
     .filter((a) => a.total > 0)
 
   const totalPeso = tareas.reduce((s, x) => s + x.peso, 0)
   const completadoPeso = tareas.reduce((s, x) => s + (x.completada ? x.peso : 0), 0)
   const pctTotal = totalPeso ? Math.round((completadoPeso / totalPeso) * 100) : 0
+  const totalMin = tareas.reduce((s, x) => s + (x.estimadoMin ?? 0), 0)
+  const completadoMin = tareas.reduce((s, x) => s + (x.completada ? (x.estimadoMin ?? 0) : 0), 0)
   const criticas = tareas.filter((x) => x.esCritica)
   const criticaDone = criticas.length > 0 && criticas.every((x) => x.completada)
   return {
@@ -85,7 +101,18 @@ function calcLocalStats(tareas: TareaProductividad[]): Stats {
     criticaDone,
     totalTareas: tareas.length,
     completadas: tareas.filter((x) => x.completada).length,
+    totalMin,
+    completadoMin,
   }
+}
+
+function formatMin(min: number): string {
+  if (min <= 0) return "0m"
+  const h = Math.floor(min / 60)
+  const m = min % 60
+  if (h === 0) return `${m}m`
+  if (m === 0) return `${h}h`
+  return `${h}h ${m}m`
 }
 
 function scoreColor(pct: number) {
@@ -194,6 +221,7 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
   const [titulo, setTitulo] = useState("")
   const [area, setArea] = useState<AreaKey>("CARRERA")
   const [peso, setPeso] = useState(1)
+  const [estimadoMin, setEstimadoMin] = useState<string>("")
   const [esCritica, setEsCritica] = useState(false)
   const [loading, setLoading] = useState(false)
   const [agrupar, setAgrupar] = useState<"orden" | "area">("orden")
@@ -228,10 +256,18 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
 
   async function agregarTarea() {
     if (!titulo.trim() || !planHoy) return
+    const estimadoNum = parseInt(estimadoMin, 10)
     const res = await fetch(`${BASE_PATH}/api/productividad/tareas`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ planDiaId: planHoy.id, titulo: titulo.trim(), area, peso, esCritica }),
+      body: JSON.stringify({
+        planDiaId: planHoy.id,
+        titulo: titulo.trim(),
+        area,
+        peso,
+        estimadoMin: Number.isFinite(estimadoNum) && estimadoNum > 0 ? estimadoNum : null,
+        esCritica,
+      }),
     })
     if (!res.ok) {
       toast.error("Error al agregar tarea")
@@ -240,6 +276,7 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
     const nueva = await res.json()
     setTareas((prev) => [...prev, nueva])
     setTitulo("")
+    setEstimadoMin("")
     setEsCritica(false)
   }
 
@@ -433,6 +470,18 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
             ))}
           </SelectContent>
         </Select>
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          step={5}
+          placeholder="min"
+          title="Tiempo estimado (minutos)"
+          className="h-7 w-[70px] text-xs"
+          value={estimadoMin}
+          onChange={(e) => setEstimadoMin(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && agregarTarea()}
+        />
         <button
           type="button"
           onClick={() => setEsCritica((v) => !v)}
@@ -533,6 +582,11 @@ function TareaItem({
         <span className={`h-1.5 w-1.5 rounded-full ${cfg?.color ?? "bg-zinc-400"}`} />
         {cfg?.label ?? t.area}
       </span>
+      {t.estimadoMin ? (
+        <span className="hidden shrink-0 text-[11px] font-medium text-zinc-400 tabular-nums sm:inline" title="Tiempo estimado">
+          {formatMin(t.estimadoMin)}
+        </span>
+      ) : null}
       <span className="shrink-0 w-8 text-right text-[11px] font-medium text-zinc-400 tabular-nums">
         ×{t.peso}
       </span>
@@ -968,6 +1022,14 @@ export default function ProductividadPage() {
             <span className="text-zinc-500 tabular-nums">
               {planHoy.stats.completadas}/{planHoy.stats.totalTareas} tareas
             </span>
+            {planHoy.stats.totalMin > 0 && (
+              <>
+                <span className="text-zinc-300">·</span>
+                <span className="text-zinc-500 tabular-nums" title="Tiempo completado / estimado">
+                  {formatMin(planHoy.stats.completadoMin)}/{formatMin(planHoy.stats.totalMin)}
+                </span>
+              </>
+            )}
             {planHoy.tareas.some((t) => t.esCritica) && (
               <>
                 <span className="text-zinc-300">·</span>
@@ -1039,6 +1101,11 @@ export default function ProductividadPage() {
                             style={{ width: `${pct}%` }}
                           />
                         </div>
+                        {a.totalMin > 0 && (
+                          <p className="text-[10px] text-zinc-400 tabular-nums">
+                            {formatMin(a.completadoMin)}/{formatMin(a.totalMin)}
+                          </p>
+                        )}
                       </div>
                     )
                   })}

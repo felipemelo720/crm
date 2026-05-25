@@ -1,20 +1,33 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-function calcStats(tareas: { peso: number; completada: boolean; area: string; esCritica: boolean }[]) {
+function calcStats(
+  tareas: { peso: number; estimadoMin: number | null; completada: boolean; area: string; esCritica: boolean }[],
+) {
   const areas = ["TRABAJO", "CARRERA", "CRECIMIENTO", "NEGOCIO", "TRADING", "SALUD", "RELACIONES"] as const
   const porArea = areas
     .map((area) => {
       const t = tareas.filter((x) => x.area === area)
       const total = t.reduce((s, x) => s + x.peso, 0)
       const completado = t.reduce((s, x) => s + (x.completada ? x.peso : 0), 0)
-      return { area, total, completado, pct: total ? Math.round((completado / total) * 100) : null }
+      const totalMin = t.reduce((s, x) => s + (x.estimadoMin ?? 0), 0)
+      const completadoMin = t.reduce((s, x) => s + (x.completada ? (x.estimadoMin ?? 0) : 0), 0)
+      return {
+        area,
+        total,
+        completado,
+        pct: total ? Math.round((completado / total) * 100) : null,
+        totalMin,
+        completadoMin,
+      }
     })
     .filter((a) => a.total > 0)
 
   const totalPeso = tareas.reduce((s, x) => s + x.peso, 0)
   const completadoPeso = tareas.reduce((s, x) => s + (x.completada ? x.peso : 0), 0)
   const pctTotal = totalPeso ? Math.round((completadoPeso / totalPeso) * 100) : 0
+  const totalMin = tareas.reduce((s, x) => s + (x.estimadoMin ?? 0), 0)
+  const completadoMin = tareas.reduce((s, x) => s + (x.completada ? (x.estimadoMin ?? 0) : 0), 0)
   const criticas = tareas.filter((x) => x.esCritica)
   const criticaDone = criticas.length > 0 && criticas.every((x) => x.completada)
 
@@ -24,6 +37,8 @@ function calcStats(tareas: { peso: number; completada: boolean; area: string; es
     criticaDone,
     totalTareas: tareas.length,
     completadas: tareas.filter((x) => x.completada).length,
+    totalMin,
+    completadoMin,
   }
 }
 

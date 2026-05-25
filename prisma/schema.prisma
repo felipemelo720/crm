@@ -165,15 +165,16 @@ model PlanDia {
 }
 
 model TareaProductividad {
-  id         String   @id @default(cuid())
-  titulo     String
-  area       String   @default("CARRERA")
-  peso       Int      @default(1)
-  completada Boolean  @default(false)
-  esCritica  Boolean  @default(false)
-  creadoEn   DateTime @default(now())
-  planDiaId  String
-  planDia    PlanDia  @relation(fields: [planDiaId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  titulo      String
+  area        String   @default("CARRERA")
+  peso        Int      @default(1)
+  estimadoMin Int?
+  completada  Boolean  @default(false)
+  esCritica   Boolean  @default(false)
+  creadoEn    DateTime @default(now())
+  planDiaId   String
+  planDia     PlanDia  @relation(fields: [planDiaId], references: [id], onDelete: Cascade)
 
   @@map("tareas_productividad")
 }

@@ -114,11 +114,13 @@ export const FORMAS_PAGO = {
 } as const
 
 export const AREAS_PRODUCTIVIDAD = {
+  TRABAJO: { label: "Trabajo", color: "bg-indigo-500", badge: "bg-indigo-100 text-indigo-800" },
   CARRERA: { label: "Carrera", color: "bg-blue-500", badge: "bg-blue-100 text-blue-800" },
   CRECIMIENTO: { label: "Crecimiento", color: "bg-purple-500", badge: "bg-purple-100 text-purple-800" },
   NEGOCIO: { label: "Negocio", color: "bg-orange-500", badge: "bg-orange-100 text-orange-800" },
+  TRADING: { label: "Trading", color: "bg-amber-500", badge: "bg-amber-100 text-amber-800" },
   SALUD: { label: "Salud", color: "bg-green-500", badge: "bg-green-100 text-green-800" },
-  OTRO: { label: "Otro", color: "bg-gray-400", badge: "bg-gray-100 text-gray-700" },
+  RELACIONES: { label: "Relaciones", color: "bg-rose-500", badge: "bg-rose-100 text-rose-800" },
 } as const
 
 export const TIPOS_PAGO = {

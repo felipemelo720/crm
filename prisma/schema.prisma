@@ -167,7 +167,7 @@ model PlanDia {
 model TareaProductividad {
   id         String   @id @default(cuid())
   titulo     String
-  area       String   @default("OTRO")
+  area       String   @default("CARRERA")
   peso       Int      @default(1)
   completada Boolean  @default(false)
   esCritica  Boolean  @default(false)

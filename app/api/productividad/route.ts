@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
 function calcStats(tareas: { peso: number; completada: boolean; area: string; esCritica: boolean }[]) {
-  const areas = ["CARRERA", "CRECIMIENTO", "NEGOCIO", "SALUD", "OTRO"] as const
+  const areas = ["TRABAJO", "CARRERA", "CRECIMIENTO", "NEGOCIO", "TRADING", "SALUD", "RELACIONES"] as const
   const porArea = areas
     .map((area) => {
       const t = tareas.filter((x) => x.area === area)

@@ -19,10 +19,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
 }
 
+async function deleteWithChildren(id: string) {
+  const children = await prisma.nota.findMany({ where: { parentId: id }, select: { id: true } })
+  for (const child of children) {
+    await deleteWithChildren(child.id)
+  }
+  await prisma.nota.delete({ where: { id } })
+}
+
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    await prisma.nota.delete({ where: { id } })
+    await deleteWithChildren(id)
     return NextResponse.json({ ok: true })
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : "Error al eliminar nota" }, { status: 500 })

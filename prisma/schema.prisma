@@ -154,11 +154,38 @@ model Pago {
   @@map("pagos")
 }
 
+model PlanDia {
+  id            String               @id @default(cuid())
+  fecha         DateTime             @unique
+  creadoEn      DateTime             @default(now())
+  actualizadoEn DateTime             @updatedAt
+  tareas        TareaProductividad[]
+
+  @@map("planes_dia")
+}
+
+model TareaProductividad {
+  id         String   @id @default(cuid())
+  titulo     String
+  area       String   @default("OTRO")
+  peso       Int      @default(1)
+  completada Boolean  @default(false)
+  esCritica  Boolean  @default(false)
+  creadoEn   DateTime @default(now())
+  planDiaId  String
+  planDia    PlanDia  @relation(fields: [planDiaId], references: [id], onDelete: Cascade)
+
+  @@map("tareas_productividad")
+}
+
 model Nota {
   id        String   @id @default(cuid())
   titulo    String   @default("Sin título")
   contenido String   @default("")
   tags      String   @default("")
+  parentId  String?
+  parent    Nota?    @relation("NotaHijos", fields: [parentId], references: [id])
+  hijos     Nota[]   @relation("NotaHijos")
   creadoEn  DateTime @default(now())
   editadoEn DateTime @updatedAt
 

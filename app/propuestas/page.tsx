@@ -1,5 +1,7 @@
 "use client"
 
+import { BASE_PATH } from "@/lib/api"
+
 import { useEffect, useState, useCallback } from "react"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
@@ -44,7 +46,7 @@ export default function PropuestasPage() {
     const params = new URLSearchParams()
     if (search) params.set("q", search)
     if (estadoFilter !== "ALL") params.set("estado", estadoFilter)
-    const [r1, r2] = await Promise.all([fetch(`/api/propuestas?${params}`), fetch("/api/clientes")])
+    const [r1, r2] = await Promise.all([fetch(`${BASE_PATH}/api/propuestas?${params}`), fetch(`${BASE_PATH}/api/clientes`)])
     setItems(await r1.json())
     setClientes(await r2.json())
   }, [search, estadoFilter])
@@ -55,7 +57,7 @@ export default function PropuestasPage() {
     setLoading(true)
     try {
       const method = editing.id ? "PATCH" : "POST"
-      const url = editing.id ? `/api/propuestas/${editing.id}` : "/api/propuestas"
+      const url = editing.id ? `${BASE_PATH}/api/propuestas/${editing.id}` : `${BASE_PATH}/api/propuestas`
       const { cliente: _c, ...data } = editing as Propuesta
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
       if (!res.ok) throw new Error()
@@ -67,7 +69,7 @@ export default function PropuestasPage() {
 
   async function del(id: string) {
     if (!confirm("¿Eliminar propuesta?")) return
-    await fetch(`/api/propuestas/${id}`, { method: "DELETE" })
+    await fetch(`${BASE_PATH}/api/propuestas/${id}`, { method: "DELETE" })
     toast.success("Propuesta eliminada"); load()
   }
 

@@ -1,5 +1,7 @@
 "use client"
 
+import { BASE_PATH } from "@/lib/api"
+
 import { useEffect, useState, useCallback } from "react"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
@@ -52,9 +54,9 @@ export default function FinanzasPage() {
     if (estadoFilter !== "ALL") params.set("estado", estadoFilter)
     if (tipoFilter !== "ALL") params.set("tipo", tipoFilter)
     const [r1, r2, r3] = await Promise.all([
-      fetch(`/api/finanzas?${params}`),
-      fetch("/api/clientes"),
-      fetch("/api/proyectos"),
+      fetch(`${BASE_PATH}/api/finanzas?${params}`),
+      fetch(`${BASE_PATH}/api/clientes`),
+      fetch(`${BASE_PATH}/api/proyectos`),
     ])
     setItems(await r1.json())
     setClientes(await r2.json())
@@ -67,7 +69,7 @@ export default function FinanzasPage() {
     setLoading(true)
     try {
       const method = editing.id ? "PATCH" : "POST"
-      const url = editing.id ? `/api/finanzas/${editing.id}` : "/api/finanzas"
+      const url = editing.id ? `${BASE_PATH}/api/finanzas/${editing.id}` : `${BASE_PATH}/api/finanzas`
       const { cliente: _c, proyecto: _p, ...data } = editing as Pago
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
       if (!res.ok) throw new Error()
@@ -79,7 +81,7 @@ export default function FinanzasPage() {
 
   async function del(id: string) {
     if (!confirm("¿Eliminar registro?")) return
-    await fetch(`/api/finanzas/${id}`, { method: "DELETE" })
+    await fetch(`${BASE_PATH}/api/finanzas/${id}`, { method: "DELETE" })
     toast.success("Registro eliminado"); load()
   }
 

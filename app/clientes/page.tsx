@@ -1,5 +1,7 @@
 "use client"
 
+import { BASE_PATH } from "@/lib/api"
+
 import { useEffect, useState, useCallback } from "react"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
@@ -45,7 +47,7 @@ export default function ClientesPage() {
     const params = new URLSearchParams()
     if (search) params.set("q", search)
     if (estadoFilter !== "ALL") params.set("estado", estadoFilter)
-    const res = await fetch(`/api/clientes?${params}`)
+    const res = await fetch(`${BASE_PATH}/api/clientes?${params}`)
     setClientes(await res.json())
   }, [search, estadoFilter])
 
@@ -55,7 +57,7 @@ export default function ClientesPage() {
     setLoading(true)
     try {
       const method = editing.id ? "PATCH" : "POST"
-      const url = editing.id ? `/api/clientes/${editing.id}` : "/api/clientes"
+      const url = editing.id ? `${BASE_PATH}/api/clientes/${editing.id}` : `${BASE_PATH}/api/clientes`
       const { id: _id, _count, ...data } = editing as Cliente & { _count?: unknown }
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(editing.id ? data : { ...data }) })
       if (!res.ok) throw new Error()
@@ -72,7 +74,7 @@ export default function ClientesPage() {
 
   async function del(id: string) {
     if (!confirm("¿Eliminar cliente?")) return
-    await fetch(`/api/clientes/${id}`, { method: "DELETE" })
+    await fetch(`${BASE_PATH}/api/clientes/${id}`, { method: "DELETE" })
     toast.success("Cliente eliminado")
     load()
   }

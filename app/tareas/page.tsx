@@ -1,5 +1,7 @@
 "use client"
 
+import { BASE_PATH } from "@/lib/api"
+
 import { useEffect, useState, useCallback } from "react"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
@@ -50,9 +52,9 @@ export default function TareasPage() {
     if (estadoFilter !== "ALL") params.set("estado", estadoFilter)
     if (prioFilter !== "ALL") params.set("prioridad", prioFilter)
     const [r1, r2, r3] = await Promise.all([
-      fetch(`/api/tareas?${params}`),
-      fetch("/api/clientes"),
-      fetch("/api/proyectos"),
+      fetch(`${BASE_PATH}/api/tareas?${params}`),
+      fetch(`${BASE_PATH}/api/clientes`),
+      fetch(`${BASE_PATH}/api/proyectos`),
     ])
     setItems(await r1.json())
     setClientes(await r2.json())
@@ -65,7 +67,7 @@ export default function TareasPage() {
     setLoading(true)
     try {
       const method = editing.id ? "PATCH" : "POST"
-      const url = editing.id ? `/api/tareas/${editing.id}` : "/api/tareas"
+      const url = editing.id ? `${BASE_PATH}/api/tareas/${editing.id}` : `${BASE_PATH}/api/tareas`
       const { cliente: _c, proyecto: _p, ...data } = editing as Tarea
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
       if (!res.ok) throw new Error()
@@ -77,12 +79,12 @@ export default function TareasPage() {
 
   async function del(id: string) {
     if (!confirm("¿Eliminar tarea?")) return
-    await fetch(`/api/tareas/${id}`, { method: "DELETE" })
+    await fetch(`${BASE_PATH}/api/tareas/${id}`, { method: "DELETE" })
     toast.success("Tarea eliminada"); load()
   }
 
   async function complete(id: string) {
-    await fetch(`/api/tareas/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado: "COMPLETADA" }) })
+    await fetch(`${BASE_PATH}/api/tareas/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado: "COMPLETADA" }) })
     toast.success("Tarea completada"); load()
   }
 

@@ -1,5 +1,7 @@
 "use client"
 
+import { BASE_PATH } from "@/lib/api"
+
 import { useEffect, useState, useCallback } from "react"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
@@ -52,7 +54,7 @@ export default function ProyectosPage() {
     const params = new URLSearchParams()
     if (search) params.set("q", search)
     if (estadoFilter !== "ALL") params.set("estado", estadoFilter)
-    const [r1, r2] = await Promise.all([fetch(`/api/proyectos?${params}`), fetch("/api/clientes")])
+    const [r1, r2] = await Promise.all([fetch(`${BASE_PATH}/api/proyectos?${params}`), fetch(`${BASE_PATH}/api/clientes`)])
     setItems(await r1.json())
     setClientes(await r2.json())
   }, [search, estadoFilter])
@@ -63,7 +65,7 @@ export default function ProyectosPage() {
     setLoading(true)
     try {
       const method = editing.id ? "PATCH" : "POST"
-      const url = editing.id ? `/api/proyectos/${editing.id}` : "/api/proyectos"
+      const url = editing.id ? `${BASE_PATH}/api/proyectos/${editing.id}` : `${BASE_PATH}/api/proyectos`
       const { cliente: _c, _count, ...data } = editing as Proyecto & { _count?: unknown }
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
       if (!res.ok) throw new Error()
@@ -75,12 +77,12 @@ export default function ProyectosPage() {
 
   async function del(id: string) {
     if (!confirm("¿Eliminar proyecto?")) return
-    await fetch(`/api/proyectos/${id}`, { method: "DELETE" })
+    await fetch(`${BASE_PATH}/api/proyectos/${id}`, { method: "DELETE" })
     toast.success("Proyecto eliminado"); load()
   }
 
   async function changeEstado(id: string, estado: string) {
-    await fetch(`/api/proyectos/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado }) })
+    await fetch(`${BASE_PATH}/api/proyectos/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado }) })
     load()
   }
 

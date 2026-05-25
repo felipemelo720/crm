@@ -113,6 +113,14 @@ export const FORMAS_PAGO = {
   CHEQUE: "Cheque",
 } as const
 
+export const AREAS_PRODUCTIVIDAD = {
+  CARRERA: { label: "Carrera", color: "bg-blue-500", badge: "bg-blue-100 text-blue-800" },
+  CRECIMIENTO: { label: "Crecimiento", color: "bg-purple-500", badge: "bg-purple-100 text-purple-800" },
+  NEGOCIO: { label: "Negocio", color: "bg-orange-500", badge: "bg-orange-100 text-orange-800" },
+  SALUD: { label: "Salud", color: "bg-green-500", badge: "bg-green-100 text-green-800" },
+  OTRO: { label: "Otro", color: "bg-gray-400", badge: "bg-gray-100 text-gray-700" },
+} as const
+
 export const TIPOS_PAGO = {
   INGRESO: "Ingreso",
   GASTO: "Gasto",

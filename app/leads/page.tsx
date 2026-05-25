@@ -1,5 +1,7 @@
 "use client"
 
+import { BASE_PATH } from "@/lib/api"
+
 import { useEffect, useState, useCallback } from "react"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
@@ -46,7 +48,7 @@ export default function LeadsPage() {
     const params = new URLSearchParams()
     if (search) params.set("q", search)
     if (estadoFilter !== "ALL") params.set("estado", estadoFilter)
-    const res = await fetch(`/api/leads?${params}`)
+    const res = await fetch(`${BASE_PATH}/api/leads?${params}`)
     setLeads(await res.json())
   }, [search, estadoFilter])
 
@@ -56,7 +58,7 @@ export default function LeadsPage() {
     setLoading(true)
     try {
       const method = editing.id ? "PATCH" : "POST"
-      const url = editing.id ? `/api/leads/${editing.id}` : "/api/leads"
+      const url = editing.id ? `${BASE_PATH}/api/leads/${editing.id}` : `${BASE_PATH}/api/leads`
       const { cliente: _c, ...data } = editing as Lead
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
       if (!res.ok) throw new Error()
@@ -68,12 +70,12 @@ export default function LeadsPage() {
 
   async function del(id: string) {
     if (!confirm("¿Eliminar lead?")) return
-    await fetch(`/api/leads/${id}`, { method: "DELETE" })
+    await fetch(`${BASE_PATH}/api/leads/${id}`, { method: "DELETE" })
     toast.success("Lead eliminado"); load()
   }
 
   async function changeEstado(id: string, estado: string) {
-    await fetch(`/api/leads/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado }) })
+    await fetch(`${BASE_PATH}/api/leads/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado }) })
     load()
   }
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { formatCLP, formatDate, ESTADOS_LEAD } from "@/lib/constants"
 import { StatusBadge } from "@/components/status-badge"
+import { BASE_PATH } from "@/lib/api"
 import {
   Users, TrendingUp, FileText, FolderKanban,
   AlertTriangle, Wallet, CalendarClock, ArrowRight,
@@ -60,7 +61,7 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
 
   useEffect(() => {
-    fetch("/api/dashboard").then(r => r.json()).then(setData)
+    fetch(`${BASE_PATH}/api/dashboard`).then(r => r.json()).then(setData)
   }, [])
 
   if (!data) {

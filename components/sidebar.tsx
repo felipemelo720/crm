@@ -12,6 +12,7 @@ import {
   Wallet,
   Building2,
   NotebookPen,
+  Target,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -24,6 +25,7 @@ const navItems = [
   { href: "/tareas", icon: CheckSquare, label: "Tareas" },
   { href: "/finanzas", icon: Wallet, label: "Finanzas" },
   { href: "/notas", icon: NotebookPen, label: "Notas" },
+  { href: "/productividad", icon: Target, label: "Productividad" },
 ]
 
 export function Sidebar() {

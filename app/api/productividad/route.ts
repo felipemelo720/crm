@@ -39,8 +39,11 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
-    const fecha = body.fecha ? new Date(body.fecha) : new Date()
-    fecha.setHours(0, 0, 0, 0)
+    const ymd: string =
+      typeof body.fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.fecha)
+        ? body.fecha
+        : new Date().toISOString().slice(0, 10)
+    const fecha = new Date(`${ymd}T12:00:00.000Z`)
 
     const existe = await prisma.planDia.findUnique({ where: { fecha } })
     if (existe) return NextResponse.json({ error: "Ya existe un plan para esta fecha" }, { status: 409 })

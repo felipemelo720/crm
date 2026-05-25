@@ -208,10 +208,11 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
   async function crearPlan() {
     setLoading(true)
     try {
+      const ymd = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`
       const res = await fetch(`${BASE_PATH}/api/productividad`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ fecha: ymd }),
       })
       if (!res.ok) {
         const e = await res.json()

@@ -289,6 +289,7 @@ function TabHoy({ planes, onRefresh }: { planes: PlanDia[]; onRefresh: () => voi
     setTitulo("")
     setEstimadoMin("")
     setEsCritica(false)
+    onRefresh()
   }
 
   async function toggleCompletada(tarea: TareaProductividad) {

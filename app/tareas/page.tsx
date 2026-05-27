@@ -199,7 +199,7 @@ export default function TareasPage() {
           <DialogHeader>
             <DialogTitle>{editing.id ? "Editar Tarea" : "Nueva Tarea"}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="col-span-2 space-y-1">
               <Label>Título *</Label>
               <Input value={editing.titulo ?? ""} onChange={e => setEditing(p => ({ ...p, titulo: e.target.value }))} />

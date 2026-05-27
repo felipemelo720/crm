@@ -87,7 +87,7 @@ export default function PropuestasPage() {
         }
       />
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
           <Input placeholder="Buscar título, empresa..." className="pl-8" value={search} onChange={e => setSearch(e.target.value)} />
@@ -163,7 +163,7 @@ export default function PropuestasPage() {
           <DialogHeader>
             <DialogTitle>{editing.id ? "Editar Propuesta" : "Nueva Propuesta"}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="col-span-2 space-y-1">
               <Label>Título *</Label>
               <Input value={editing.titulo ?? ""} onChange={e => setEditing(p => ({ ...p, titulo: e.target.value }))} />

@@ -98,7 +98,7 @@ export default function ProyectosPage() {
         }
       />
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
           <Input placeholder="Buscar proyecto, empresa..." className="pl-8" value={search} onChange={e => setSearch(e.target.value)} />
@@ -121,12 +121,12 @@ export default function ProyectosPage() {
         </TabsList>
 
         <TabsContent value="kanban" className="mt-4">
-          <div className="flex gap-3 overflow-x-auto pb-4">
+          <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory -mx-3 px-3 sm:mx-0 sm:px-0 sm:snap-none">
             {KANBAN_COLS.map(col => {
               const colItems = items.filter(p => p.estado === col)
               const info = ESTADOS_PROYECTO[col]
               return (
-                <div key={col} className="flex-shrink-0 w-60">
+                <div key={col} className="flex-shrink-0 w-[85vw] max-w-[260px] sm:w-60 snap-start">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-xs font-semibold text-zinc-700 uppercase tracking-wide">{info.label}</span>
                     <span className="rounded-full bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-500">{colItems.length}</span>
@@ -167,7 +167,7 @@ export default function ProyectosPage() {
               const colItems = items.filter(p => p.estado === col)
               const info = ESTADOS_PROYECTO[col]
               return (
-                <div key={col} className="flex-shrink-0 w-60">
+                <div key={col} className="flex-shrink-0 w-[85vw] max-w-[260px] sm:w-60 snap-start">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{info.label}</span>
                     <span className="rounded-full bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-400">{colItems.length}</span>
@@ -253,7 +253,7 @@ export default function ProyectosPage() {
           <DialogHeader>
             <DialogTitle>{editing.id ? "Editar Proyecto" : "Nuevo Proyecto"}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="col-span-2 space-y-1">
               <Label>Nombre *</Label>
               <Input value={editing.nombre ?? ""} onChange={e => setEditing(p => ({ ...p, nombre: e.target.value }))} />

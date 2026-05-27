@@ -96,7 +96,7 @@ export default function ClientesPage() {
         }
       />
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
           <Input placeholder="Buscar empresa, RUT, email..." className="pl-8" value={search} onChange={e => setSearch(e.target.value)} />
@@ -183,7 +183,7 @@ export default function ClientesPage() {
           <DialogHeader>
             <DialogTitle>{editing.id ? "Editar Cliente" : "Nuevo Cliente"}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="col-span-2 space-y-1">
               <Label>Empresa *</Label>
               <Input value={editing.empresa ?? ""} onChange={e => setEditing(p => ({ ...p, empresa: e.target.value }))} />

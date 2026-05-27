@@ -217,7 +217,7 @@ export default function FinanzasPage() {
           <DialogHeader>
             <DialogTitle>{editing.id ? "Editar Registro" : "Nuevo Registro"}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="col-span-2 space-y-1">
               <Label>Descripción *</Label>
               <Input value={editing.descripcion ?? ""} onChange={e => setEditing(p => ({ ...p, descripcion: e.target.value }))} />

@@ -93,7 +93,7 @@ export default function LeadsPage() {
         }
       />
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
           <Input placeholder="Buscar nombre, empresa..." className="pl-8" value={search} onChange={e => setSearch(e.target.value)} />
@@ -118,12 +118,12 @@ export default function LeadsPage() {
         </TabsList>
 
         <TabsContent value="kanban" className="mt-4">
-          <div className="flex gap-3 overflow-x-auto pb-4">
+          <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory -mx-3 px-3 sm:mx-0 sm:px-0 sm:snap-none">
             {KANBAN_COLS.map(col => {
               const items = leads.filter(l => l.estado === col)
               const info = ESTADOS_LEAD[col]
               return (
-                <div key={col} className="flex-shrink-0 w-56">
+                <div key={col} className="flex-shrink-0 w-[85vw] max-w-[260px] sm:w-56 snap-start">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-xs font-semibold text-zinc-700 uppercase tracking-wide">{info.label}</span>
                     <span className="rounded-full bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-500">{items.length}</span>
@@ -166,7 +166,7 @@ export default function LeadsPage() {
               const items = leads.filter(l => l.estado === col)
               const info = ESTADOS_LEAD[col]
               return (
-                <div key={col} className="flex-shrink-0 w-56">
+                <div key={col} className="flex-shrink-0 w-[85vw] max-w-[260px] sm:w-56 snap-start">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: col === "GANADO" ? "#16a34a" : "#dc2626" }}>{info.label}</span>
                     <span className="rounded-full bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-500">{items.length}</span>
@@ -187,8 +187,8 @@ export default function LeadsPage() {
         </TabsContent>
 
         <TabsContent value="lista" className="mt-4">
-          <div className="rounded-lg border border-zinc-200 bg-white">
-            <table className="w-full text-sm">
+          <div className="rounded-lg border border-zinc-200 bg-white overflow-x-auto">
+            <table className="w-full text-sm min-w-[720px]">
               <thead>
                 <tr className="border-b bg-zinc-50 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   <th className="px-4 py-3">Lead</th>
@@ -240,7 +240,7 @@ export default function LeadsPage() {
           <DialogHeader>
             <DialogTitle>{editing.id ? "Editar Lead" : "Nuevo Lead"}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="space-y-1">
               <Label>Nombre *</Label>
               <Input value={editing.nombre ?? ""} onChange={e => setEditing(p => ({ ...p, nombre: e.target.value }))} />

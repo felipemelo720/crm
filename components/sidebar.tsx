@@ -28,12 +28,11 @@ const navItems = [
   { href: "/productividad", icon: Target, label: "Productividad" },
 ]
 
-export function Sidebar() {
+export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
-
   return (
-    <aside className="flex h-screen w-60 flex-col border-r border-zinc-200 bg-white">
-      <div className="flex h-14 items-center gap-2 border-b border-zinc-200 px-4">
+    <>
+      <div className="flex h-14 items-center gap-2 border-b border-zinc-200 px-4 flex-shrink-0">
         <Building2 className="h-5 w-5 text-zinc-800" />
         <div className="flex flex-col leading-tight">
           <span className="text-sm font-semibold text-zinc-900">IntegraSistemas</span>
@@ -48,8 +47,9 @@ export function Sidebar() {
               <li key={href}>
                 <Link
                   href={href}
+                  onClick={onNavigate}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-md px-3 py-3 sm:py-2 text-sm font-medium transition-colors",
                     active
                       ? "bg-zinc-900 text-white"
                       : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
@@ -63,9 +63,17 @@ export function Sidebar() {
           })}
         </ul>
       </nav>
-      <div className="border-t border-zinc-200 px-4 py-3">
+      <div className="border-t border-zinc-200 px-4 py-3 flex-shrink-0">
         <p className="text-[10px] text-zinc-400">FelipeMelo.cl · IntegraSistemas.cl</p>
       </div>
+    </>
+  )
+}
+
+export function Sidebar() {
+  return (
+    <aside className="hidden md:flex h-screen w-60 flex-col border-r border-zinc-200 bg-white">
+      <SidebarNav />
     </aside>
   )
 }

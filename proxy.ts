@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
 
   const secret = request.cookies.get("crm_auth")?.value
   if (secret !== process.env.CRM_SECRET) {
-    const loginUrl = new URL("/login", request.url)
+    const loginUrl = new URL(`${request.nextUrl.basePath}/login`, request.url)
     loginUrl.searchParams.set("from", pathname)
     return NextResponse.redirect(loginUrl)
   }
